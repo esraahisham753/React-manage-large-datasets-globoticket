@@ -33,24 +33,48 @@ const generateEventData = (n) => {
 
 const eventRowHeight = 100;
 
-const Event = ({ data, style }) => {
-  const { thumbNail, dateTime, name, artist, price, tickets } = data;
-  return (
-    <div className="table-row" style={{ height: eventRowHeight, ...style }}>
-      <div className="table-row-data event-image">
-        <img alt="thumbnail" src={thumbNails[thumbNail]} />
+class Event extends React.Component {
+  constructor(props) {
+    super(props);
+    this.thumbNail = props.data.thumbNail;
+    this.dateTime = props.data.dateTime;
+    this.name = props.data.name;
+    this.artist = props.data.artist;
+    this.price = props.data.price;
+    this.tickets = props.data.tickets;
+    this.style = props.style;
+  }
+
+  shouldComponentUpdate(nextProps) {
+    const { data } = this.props;
+
+    return (
+      data.name + data.dateTime !==
+      nextProps.data.name + nextProps.data.dateTime
+    );
+  }
+
+  render() {
+    return (
+      <div
+        className="table-row"
+        style={{ height: eventRowHeight, ...this.style }}
+      >
+        <div className="table-row-data event-image">
+          <img alt="thumbnail" src={thumbNails[this.thumbNail]} />
+        </div>
+        <div className="table-row-data event-date">{this.dateTime}</div>
+        <div className="table-row-data event-name">{this.name}</div>
+        <div className=" table-row-data event-artist">{this.artist}</div>
+        <div className="table-row-data event-price">${this.price}</div>
+        <div className="table-row-data event-price">{this.tickets}</div>
+        <div className="table-row-data event-purchase-button">
+          <button>Purchase Details</button>
+        </div>
       </div>
-      <div className="table-row-data event-date">{dateTime}</div>
-      <div className="table-row-data event-name">{name}</div>
-      <div className=" table-row-data event-artist">{artist}</div>
-      <div className="table-row-data event-price">${price}</div>
-      <div className="table-row-data event-price">{tickets}</div>
-      <div className="table-row-data event-purchase-button">
-        <button>Purchase Details</button>
-      </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 export default class Catalog extends Component {
   state = {
@@ -69,8 +93,19 @@ export default class Catalog extends Component {
     if (!this.filteredEvents || this.filteredEvents.length === 0) {
       return null;
     }
-
-    return <Event data={this.filteredEvents[index]} key={key} style={style} />;
+    console.log(
+      "Event key",
+      this.filteredEvents[index].name + this.filteredEvents[index].dateTime,
+    );
+    return (
+      <Event
+        data={this.filteredEvents[index]}
+        key={
+          this.filteredEvents[index].name + this.filteredEvents[index].dateTime
+        }
+        style={style}
+      />
+    );
   }
 
   generateEvents() {
@@ -94,8 +129,6 @@ export default class Catalog extends Component {
   }
 
   render() {
-    var filteredEvents;
-
     if (!this.state.artistFilter) {
       this.filteredEvents = this.state.eventData;
     } else {
@@ -107,7 +140,7 @@ export default class Catalog extends Component {
       );
     }
 
-    const eventsPagination = new Pagination(filteredEvents, 1);
+    const eventsPagination = new Pagination(this.filteredEvents, 1);
     this.totalPages = eventsPagination.getTotalPages();
 
     /*console.log(

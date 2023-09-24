@@ -3,6 +3,7 @@ export default class Pagination {
   constructor(data, pageSize) {
     this.data = data;
     this.pageSize = pageSize;
+    console.log("Data from constructor", this.data);
   }
 
   getPage(n) {
@@ -15,6 +16,7 @@ export default class Pagination {
   }
 
   getTotalPages() {
+    console.log("Data from get total pages", this.data);
     console.log("Total pages: ", Math.ceil(this.data.length / this.pageSize));
     return Math.ceil(this.data.length / this.pageSize);
   }
